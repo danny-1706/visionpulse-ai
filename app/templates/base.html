@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VisionPulse AI - Nền tảng Thị giác Máy tính Đa năng{% endblock %}</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#090d16',
+                            card: '#111827',
+                            border: '#1f293d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-[#090d16] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="/" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                    <i data-lucide="scan-eye" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">VisionPulse AI</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">YOLOv8 Scaled</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 hidden sm:block">Full-stack Computer Vision Platform</p>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="flex items-center space-x-1 sm:space-x-3">
+                <a href="/" class="flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition {% if active_page == 'dashboard' %}bg-blue-600/20 text-blue-400 border border-blue-500/30{% else %}text-slate-400 hover:text-slate-200 hover:bg-slate-800/40{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard Phân Tích</span>
+                </a>
+
+                <a href="/history" class="flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition {% if active_page == 'history' %}bg-blue-600/20 text-blue-400 border border-blue-500/30{% else %}text-slate-400 hover:text-slate-200 hover:bg-slate-800/40{% endif %}">
+                    <i data-lucide="history" class="w-4 h-4"></i>
+                    <span>Lịch Sử & Thống Kê</span>
+                </a>
+            </nav>
+
+            <!-- Actions: Live Queue Monitor, Guide & Theme Toggle -->
+            <div class="flex items-center space-x-2">
+                <!-- Live Queue Concurrency Pill -->
+                <div id="queue-status-pill" title="Hệ thống quản lý hàng đợi & mức độ tải đồng thời" class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold glass-card border border-slate-700/60 text-slate-300">
+                    <span id="queue-indicator" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="queue-text" class="font-mono text-[11px]">Sẵn sàng (0/3 slot)</span>
+                </div>
+
+                <!-- User Guide Button -->
+                <button onclick="toggleGuideModal()" title="Hướng dẫn sử dụng" class="flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white glass-card hover:bg-slate-800/60 transition border border-slate-700/60">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-blue-400"></i>
+                    <span class="hidden md:inline">Hướng Dẫn</span>
+                </button>
+
+                <!-- Theme Switcher -->
+                <button id="theme-toggle" onclick="toggleTheme()" title="Đổi giao diện Sáng / Tối" class="p-2 rounded-xl glass-card text-slate-300 hover:text-white hover:bg-slate-800/60 transition border border-slate-700/60">
+                    <i id="theme-icon" data-lucide="sun" class="w-5 h-5 text-amber-400"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Block -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Modals -->
+    {% include "components/guide_modal.html" %}
+    {% include "components/webcam_modal.html" %}
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800/80 py-4 mt-auto text-center text-xs text-slate-500">
+        <p>VisionPulse AI Platform • Scaled with Async Queue & ThreadPool • Ready for 10-20 Concurrent Users</p>
+    </footer>
+
+    <!-- Global App JS -->
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

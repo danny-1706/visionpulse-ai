@@ -1,0 +1,28 @@
+# Python & Virtual Environments
+venv/
+env/
+ENV/
+.env
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Database & Runtime Uploads
+data/*.db
+data/*.db-wal
+data/*.db-shm
+!data/.gitkeep
+
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Ultralytics cache & settings
+runs/
+*.onnx

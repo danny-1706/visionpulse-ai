@@ -1,0 +1,74 @@
+<!-- Modal Hướng Dẫn Sử Dụng Trực Quan -->
+<div id="guide-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300 relative border border-slate-700/50">
+        <!-- Close Button -->
+        <button onclick="toggleGuideModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800/50 transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center border border-blue-500/30">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-100">Hướng dẫn sử dụng VisionPulse AI</h3>
+                <p class="text-xs text-slate-400">Các bước khai thác tối đa sức mạnh phân tích thị giác máy tính</p>
+            </div>
+        </div>
+
+        <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+            <!-- Step 1 -->
+            <div class="glass-card rounded-xl p-4 flex items-start space-x-4">
+                <div class="w-8 h-8 rounded-lg bg-blue-600/30 text-blue-400 flex items-center justify-center font-bold text-sm shrink-0 border border-blue-500/30">1</div>
+                <div>
+                    <h4 class="font-semibold text-slate-200 text-sm">Chọn Tác Vụ Phân Tích (Task Selection)</h4>
+                    <p class="text-xs text-slate-400 mt-1">
+                        • <strong>Phát hiện đối tượng (Object Detection):</strong> Nhận diện và khoanh vùng 80 danh mục vật thể quen thuộc (người, xe, đồ vật).<br>
+                        • <strong>Phân vùng (Segmentation):</strong> Vẽ mặt nạ màu đa giác chuẩn xác bám sát từng viền đối tượng.<br>
+                        • <strong>Ước lượng tư thế (Pose Estimation):</strong> Nhận diện 17 khớp nối cơ thể và khung xương chuyển động của con người.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="glass-card rounded-xl p-4 flex items-start space-x-4">
+                <div class="w-8 h-8 rounded-lg bg-emerald-600/30 text-emerald-400 flex items-center justify-center font-bold text-sm shrink-0 border border-emerald-500/30">2</div>
+                <div>
+                    <h4 class="font-semibold text-slate-200 text-sm">Cung Cấp Hình Ảnh Đầu Vào</h4>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Bạn có thể kéo thả ảnh từ máy tính hoặc bấm <strong>"Chụp Webcam"</strong> để trực tiếp dùng Camera máy tính làm dữ liệu phân tích ngay lập tức.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="glass-card rounded-xl p-4 flex items-start space-x-4">
+                <div class="w-8 h-8 rounded-lg bg-purple-600/30 text-purple-400 flex items-center justify-center font-bold text-sm shrink-0 border border-purple-500/30">3</div>
+                <div>
+                    <h4 class="font-semibold text-slate-200 text-sm">Tinh Chỉnh Tham Số (Confidence & IoU)</h4>
+                    <p class="text-xs text-slate-400 mt-1">
+                        • <strong>Confidence (Ngưỡng tin cậy):</strong> Tăng lên nếu muốn loại bỏ các phát hiện mơ hồ; giảm xuống để phát hiện cả vật thể nhỏ/xa.<br>
+                        • <strong>IoU (Ngưỡng trùng lặp):</strong> Kiểm soát việc lọc bỏ các hộp bao chồng chéo lên nhau (Non-Max Suppression).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="glass-card rounded-xl p-4 flex items-start space-x-4">
+                <div class="w-8 h-8 rounded-lg bg-amber-600/30 text-amber-400 flex items-center justify-center font-bold text-sm shrink-0 border border-amber-500/30">4</div>
+                <div>
+                    <h4 class="font-semibold text-slate-200 text-sm">Xuất Kết Quả & Xem Thống Kê</h4>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Bấm <strong>"Tải xuống"</strong> để lưu bức ảnh hoàn thiện về máy. Mọi kết quả phân tích đều được tự động lưu vào tab <strong>"Lịch sử"</strong> kèm theo biểu đồ tỷ lệ đối tượng nhận diện.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-700/50 flex justify-end">
+            <button onclick="toggleGuideModal()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium text-sm shadow-lg transition">
+                Đã hiểu, Bắt đầu ngay
+            </button>
+        </div>
+    </div>
+</div>

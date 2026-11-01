@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Phân Tích - VisionPulse AI Scaled{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Top Control Panel: Task Selection & Sliders -->
+    <div class="glass-panel rounded-2xl p-5 border border-slate-800">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            
+            <!-- 1. Task Selection Tabs (5 Cols) -->
+            <div class="lg:col-span-5 space-y-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center space-x-1.5">
+                    <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-400"></i>
+                    <span>1. Chọn Mô Hình / Tác Vụ AI</span>
+                </label>
+                <div class="grid grid-cols-3 gap-2">
+                    <!-- Task Detection -->
+                    <button type="button" onclick="selectTask('detection')" id="task-btn-detection" class="task-selector-btn active-task px-3 py-3 rounded-xl border text-center transition flex flex-col items-center justify-center space-y-1">
+                        <i data-lucide="crosshair" class="w-5 h-5 text-blue-400"></i>
+                        <span class="text-xs font-semibold">Phát Hiện</span>
+                        <span class="text-[10px] text-slate-400">Object Detect</span>
+                    </button>
+
+                    <!-- Task Segmentation -->
+                    <button type="button" onclick="selectTask('segmentation')" id="task-btn-segmentation" class="task-selector-btn px-3 py-3 rounded-xl border border-slate-700/60 bg-slate-900/40 text-center transition flex flex-col items-center justify-center space-y-1 hover:border-slate-600">
+                        <i data-lucide="shapes" class="w-5 h-5 text-emerald-400"></i>
+                        <span class="text-xs font-semibold">Phân Vùng</span>
+                        <span class="text-[10px] text-slate-400">Segmentation</span>
+                    </button>
+
+                    <!-- Task Pose -->
+                    <button type="button" onclick="selectTask('pose')" id="task-btn-pose" class="task-selector-btn px-3 py-3 rounded-xl border border-slate-700/60 bg-slate-900/40 text-center transition flex flex-col items-center justify-center space-y-1 hover:border-slate-600">
+                        <i data-lucide="activity" class="w-5 h-5 text-purple-400"></i>
+                        <span class="text-xs font-semibold">Tư Thế</span>
+                        <span class="text-[10px] text-slate-400">Human Pose</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Parameter Tuning Sliders (4 Cols) -->
+            <div class="lg:col-span-4 space-y-2.5 glass-card rounded-xl p-3 border border-slate-800">
+                <!-- Confidence Slider -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="font-medium text-slate-300">Ngưỡng Tin Cậy (Confidence)</span>
+                        <span id="conf-val" class="font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">0.25</span>
+                    </div>
+                    <input type="range" id="conf-slider" min="0.05" max="1.00" step="0.05" value="0.25" oninput="updateConf(this.value)" class="w-full">
+                </div>
+
+                <!-- IoU Slider -->
+                <div>
+                    <div class="flex justify-between items-center text-xs mb-1">
+                        <span class="font-medium text-slate-300">Ngưỡng Trùng Lặp (IoU)</span>
+                        <span id="iou-val" class="font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">0.45</span>
+                    </div>
+                    <input type="range" id="iou-slider" min="0.10" max="0.95" step="0.05" value="0.45" oninput="updateIoU(this.value)" class="w-full">
+                </div>
+
+                <!-- Speed / Resolution Mode Toggle -->
+                <div class="flex items-center justify-between pt-1 border-t border-slate-700/50 text-[11px]">
+                    <span class="text-slate-400">Tốc độ tối ưu:</span>
+                    <div class="flex items-center space-x-1 bg-slate-900/80 p-0.5 rounded-lg border border-slate-700">
+                        <button type="button" onclick="setImageSize(480)" id="size-btn-480" class="px-2 py-0.5 rounded text-[10px] font-semibold text-slate-400 hover:text-white transition">480p (Nhanh)</button>
+                        <button type="button" onclick="setImageSize(640)" id="size-btn-640" class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white shadow transition">640p (Chuẩn)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Actions: Input & Run (3 Cols) -->
+            <div class="lg:col-span-3 flex flex-col space-y-2">
+                <input type="file" id="file-input" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="document.getElementById('file-input').click()" class="flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-700/60 text-slate-200 text-xs font-semibold transition">
+                        <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-400"></i>
+                        <span>Tải Ảnh</span>
+                    </button>
+                    <button type="button" onclick="openWebcamModal()" class="flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl border border-purple-700/50 bg-purple-900/20 hover:bg-purple-900/40 text-purple-200 text-xs font-semibold transition">
+                        <i data-lucide="camera" class="w-4 h-4 text-purple-400"></i>
+                        <span>Webcam</span>
+                    </button>
+                </div>
+
+                <button type="button" id="run-btn" onclick="startInference()" disabled class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed transition shadow-lg shadow-blue-600/20 hover:scale-[1.01] active:scale-[0.99]">
+                    <i data-lucide="sparkles" class="w-4 h-4" id="run-icon"></i>
+                    <span id="run-text">Phân Tích Ngay</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Dual-Column Workspace (Before / After Comparison) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Column 1: Original Image Workspace -->
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-slate-500"></div>
+                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider">Ảnh Đầu Vào (Gốc)</h3>
+                </div>
+                <div id="orig-info" class="text-xs text-slate-400 hidden">
+                    <span id="orig-size" class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700">0 x 0 px</span>
+                </div>
+            </div>
+
+            <!-- Dropzone / Image Display -->
+            <div id="drop-zone" class="relative flex-1 min-h-[380px] max-h-[520px] rounded-xl border-2 border-dashed border-slate-700/80 bg-slate-900/30 flex flex-col items-center justify-center p-4 transition-all duration-200 overflow-hidden cursor-pointer" onclick="triggerFileInput(event)">
+                
+                <!-- Placeholder State -->
+                <div id="drop-placeholder" class="text-center space-y-3 pointer-events-none">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
+                        <i data-lucide="image-plus" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-200">Kéo & thả ảnh vào đây hoặc bấm để chọn</p>
+                        <p class="text-xs text-slate-500 mt-1">Hỗ trợ JPG, PNG, WEBP (Tối đa 15MB)</p>
+                    </div>
+                </div>
+
+                <!-- Preview Image -->
+                <img id="orig-preview" src="" alt="Ảnh gốc" class="hidden max-h-full max-w-full object-contain rounded-lg shadow-md transition-all">
+
+                <!-- Reset Button -->
+                <button type="button" id="clear-btn" onclick="clearSelectedImage(event)" title="Xoá ảnh này" class="hidden absolute top-3 right-3 p-2 rounded-xl bg-slate-900/80 hover:bg-rose-900/80 text-slate-300 hover:text-white border border-slate-700 transition">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Column 2: Result Image Workspace -->
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 flex flex-col space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider">Kết Quả Phân Tích AI</h3>
+                </div>
+                
+                <!-- Performance Badges -->
+                <div id="result-badges" class="flex items-center space-x-2 hidden">
+                    <span id="badge-latency" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20 flex items-center space-x-1">
+                        <i data-lucide="zap" class="w-3 h-3"></i>
+                        <span>0 ms</span>
+                    </span>
+                    <span id="badge-queue" class="text-xs font-medium text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 flex items-center space-x-1">
+                        <i data-lucide="clock" class="w-3 h-3 text-indigo-400"></i>
+                        <span>Chờ: 0 ms</span>
+                    </span>
+                    <span id="badge-count" class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded border border-blue-500/20">
+                        0 đối tượng
+                    </span>
+                </div>
+            </div>
+
+            <!-- Result Display / Empty State -->
+            <div id="result-viewport" class="relative flex-1 min-h-[380px] max-h-[520px] rounded-xl border border-slate-700/80 bg-slate-900/40 flex flex-col items-center justify-center p-4 overflow-hidden">
+                
+                <!-- Waiting State -->
+                <div id="result-placeholder" class="text-center space-y-3">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-800/60 border border-slate-700 text-slate-500 flex items-center justify-center">
+                        <i data-lucide="cpu" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-sm font-medium text-slate-400">Chưa có kết quả phân tích</p>
+                    <p class="text-xs text-slate-600">Chọn tác vụ, tải ảnh và bấm "Phân Tích Ngay"</p>
+                </div>
+
+                <!-- Loading Spinner & Queue State -->
+                <div id="result-loading" class="hidden text-center space-y-3">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center">
+                        <i data-lucide="loader" class="w-8 h-8 animate-spin"></i>
+                    </div>
+                    <p id="loading-main-text" class="text-sm font-semibold text-blue-300">Đang điều phối hàng đợi & xử lý AI...</p>
+                    <p id="loading-sub-text" class="text-xs text-slate-400">Mô hình đang thực thi suy luận bất đồng bộ trong ThreadPool riêng biệt</p>
+                </div>
+
+                <!-- Result Annotated Image -->
+                <img id="result-preview" src="" alt="Kết quả phân tích" class="hidden max-h-full max-w-full object-contain rounded-lg shadow-xl">
+
+                <!-- Floating Result Actions -->
+                <div id="result-actions" class="hidden absolute top-3 right-3 flex items-center space-x-2">
+                    <button type="button" onclick="downloadResultImage()" title="Tải xuống bức ảnh này" class="p-2 rounded-xl bg-blue-600/90 hover:bg-blue-500 text-white shadow-lg border border-blue-400/40 transition">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                    </button>
+                    <button type="button" onclick="openFullscreenResult()" title="Xem toàn màn hình" class="p-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700 transition">
+                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bottom Tray: Detection Inspection Cards -->
+    <div id="inspection-section" class="glass-panel rounded-2xl p-5 border border-slate-800 hidden">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="list-filter" class="w-4 h-4 text-indigo-400"></i>
+                <h3 class="font-bold text-sm text-slate-200 uppercase tracking-wider">Danh Sách Đối Tượng Nhận Diện Chi Tiết</h3>
+            </div>
+            <span id="objects-summary-badge" class="text-xs text-slate-400">0 danh mục phát hiện</span>
+        </div>
+
+        <div id="detections-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-72 overflow-y-auto pr-1">
+            <!-- Detection Item Cards injected via JavaScript -->
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/webcam.js"></script>
+<script src="/static/js/inference.js"></script>
+{% endblock %}

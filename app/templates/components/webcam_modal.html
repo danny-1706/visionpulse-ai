@@ -1,0 +1,47 @@
+<!-- Modal Chụp Ảnh Từ Webcam -->
+<div id="webcam-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+    <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 shadow-2xl relative border border-slate-700/50">
+        <!-- Close Button -->
+        <button onclick="closeWebcamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800/50 transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <div class="flex items-center space-x-3 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center border border-purple-500/30">
+                <i data-lucide="camera" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-slate-100">Chụp Ảnh Trực Tiếp Từ Webcam</h3>
+                <p class="text-xs text-slate-400">Đảm bảo bạn đã cấp quyền truy cập Camera trên trình duyệt</p>
+            </div>
+        </div>
+
+        <!-- Video Viewport -->
+        <div class="relative w-full aspect-video bg-black/80 rounded-xl overflow-hidden border border-slate-700 flex items-center justify-center">
+            <video id="webcam-video" autoplay playsinline class="w-full h-full object-cover"></video>
+            <canvas id="webcam-canvas" class="hidden"></canvas>
+            
+            <div id="webcam-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/80 space-y-2">
+                <i data-lucide="loader-2" class="w-8 h-8 text-blue-400 animate-spin"></i>
+                <p class="text-xs text-slate-300">Đang khởi động Camera...</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="mt-5 flex items-center justify-between">
+            <span class="text-xs text-slate-400 flex items-center">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                Webcam Stream Live
+            </span>
+            <div class="flex items-center space-x-3">
+                <button onclick="closeWebcamModal()" class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800/50 text-sm font-medium transition">
+                    Hủy bỏ
+                </button>
+                <button onclick="captureWebcamSnapshot()" class="flex items-center space-x-2 px-5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium text-sm shadow-lg shadow-purple-500/25 transition">
+                    <i data-lucide="aperture" class="w-4 h-4"></i>
+                    <span>Chụp Ảnh Này</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
