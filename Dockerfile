@@ -22,6 +22,9 @@ COPY . /app/
 # Tạo các thư mục runtime nếu chưa có
 RUN mkdir -p /app/data /app/app/static/uploads /app/weights
 
+# Cấp toàn quyền đọc/ghi cho ứng dụng (tương thích Hugging Face Spaces & non-root user)
+RUN chmod -R 777 /app
+
 # Thiết lập cổng mặc định của Hugging Face Spaces
 ENV PORT=7860
 ENV HOST=0.0.0.0
